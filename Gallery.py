@@ -25,10 +25,10 @@ class Gallery:
                 dades = json.load(fitxer)
         except (OSError, ValueError) as error:
             print('No es pot carregar la galeria:', error)
-            return False
+            return
         if not isinstance(dades, dict) or not isinstance(dades.get('images'), list):
             print('Format de galeria incorrecte')
-            return False
+            return
         self.nom = dades.get('gallery_name', '')
         self.descripcio = dades.get('description', '')
         self.data = dades.get('created_date', '')
@@ -46,7 +46,6 @@ class Gallery:
                     identificador = self.image_id.get_uuid(ruta[len(prefix):])
             if identificador is not None:
                 self.imatges.append(identificador)
-        return True
 
     def show(self):
         for identificador in self.imatges:
