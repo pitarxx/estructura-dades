@@ -30,9 +30,28 @@ class ImageID:
         self.fitxers_per_id[identificador] = fitxer
         return identificador
 
+    def _variants(self, fitxer):
+        # el mateix fitxer pot arribar escrit de diverses maneres
+        # ('x.png', '../x.png', 'generated_images/x.png'...), així que
+        # provem les formes més habituals abans de dir que no hi és
+        base = self._ruta_relativa(fitxer)
+        formes = [base]
+        prefix = os.path.basename(cfg.get_root()) + '/'
+        for forma in list(formes):
+            curta = forma
+            while curta.startswith('../'):
+                curta = curta[3:]
+            if curta.startswith(prefix):
+                curta = curta[len(prefix):]
+            formes.append(curta)
+            formes.append('../' + curta)
+        return formes
+
     def get_uuid(self, file):
-        fitxer = self._ruta_relativa(file)
-        return self.ids_per_fitxer.get(fitxer)
+        for forma in self._variants(file):
+            if forma in self.ids_per_fitxer:
+                return self.ids_per_fitxer[forma]
+        return None
 
     def remove_uuid(self, uuid):
         identificador = str(uuid)

@@ -34,9 +34,15 @@ class ImageViewer:
         print('Created Date:', self.image_data.get_created_date(uuid))
 
     def show_file(self, file):
-        ruta = os.path.join(cfg.get_root(), file)
-        if not os.path.isfile(ruta) and os.path.isfile(file):
-            ruta = file
+        arrel = cfg.get_root()
+        curta = os.path.normpath(file).replace(os.sep, '/')
+        while curta.startswith('../'):
+            curta = curta[3:]
+        ruta = os.path.join(arrel, file)
+        for candidat in (ruta, file, os.path.join(arrel, curta)):
+            if os.path.isfile(candidat):
+                ruta = candidat
+                break
         try:
             with Image.open(ruta) as imatge:
                 imatge.show()

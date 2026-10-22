@@ -22,6 +22,18 @@ class ImageData:
             dades[camp] = None
         self.imatges[identificador] = dades
 
+    def _ruta_completa(self, fitxer):
+        # busca el fitxer a l'arrel, tal com ens l'han donat, o sense els '../' del davant
+        arrel = cfg.get_root()
+        curta = os.path.normpath(fitxer).replace(os.sep, '/')
+        while curta.startswith('../'):
+            curta = curta[3:]
+        candidats = [os.path.join(arrel, fitxer), fitxer, os.path.join(arrel, curta)]
+        for candidat in candidats:
+            if os.path.isfile(candidat):
+                return candidat
+        return candidats[0]
+
     def remove_image(self, uuid):
         self.imatges.pop(str(uuid), None)
 
@@ -30,10 +42,7 @@ class ImageData:
         if identificador not in self.imatges:
             return
         dades = self.imatges[identificador]
-        ruta = os.path.join(cfg.get_root(), dades['filename'])
-        # si no hi és a l'arrel, provem el path tal com ens l'han donat
-        if not os.path.isfile(ruta) and os.path.isfile(dades['filename']):
-            ruta = dades['filename']
+        ruta = self._ruta_completa(dades['filename'])
         metadades = cfg.read_png_metadata(ruta)
         if metadades is None:
             metadades = {}
