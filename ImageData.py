@@ -13,10 +13,7 @@ class ImageData:
     def add_image(self, uuid, file):
         if not uuid or not file:
             return
-        ruta = os.path.join(cfg.get_root(), file)
-        # si el fitxer no existeix no l'afegim
-        if not os.path.isfile(ruta):
-            return
+        # només creem l'entrada: els metadades es llegeixen després amb load_metadata
         identificador = str(uuid)
         if identificador in self.imatges:
             return
@@ -34,6 +31,9 @@ class ImageData:
             return
         dades = self.imatges[identificador]
         ruta = os.path.join(cfg.get_root(), dades['filename'])
+        # si no hi és a l'arrel, provem el path tal com ens l'han donat
+        if not os.path.isfile(ruta) and os.path.isfile(dades['filename']):
+            ruta = dades['filename']
         metadades = cfg.read_png_metadata(ruta)
         if metadades is None:
             metadades = {}

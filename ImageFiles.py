@@ -16,7 +16,7 @@ class ImageFiles:
             for nom in noms:
                 if nom.lower().endswith('.png'):
                     ruta = os.path.join(carpeta, nom)
-                    relativa = os.path.relpath(os.path.abspath(ruta), cfg.get_root()).replace(os.sep, '/')
+                    relativa = os.path.relpath(os.path.realpath(ruta), cfg.get_root()).replace(os.sep, '/')
                     nous.add(relativa)
 
         self.afegits = sorted(nous - self.fitxers)

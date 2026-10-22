@@ -35,6 +35,8 @@ class ImageViewer:
 
     def show_file(self, file):
         ruta = os.path.join(cfg.get_root(), file)
+        if not os.path.isfile(ruta) and os.path.isfile(file):
+            ruta = file
         try:
             with Image.open(ruta) as imatge:
                 imatge.show()

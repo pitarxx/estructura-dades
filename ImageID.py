@@ -9,10 +9,16 @@ class ImageID:
         self.fitxers_per_id = {}
 
     def _ruta_relativa(self, fitxer):
-        # sempre treballem amb rutes relatives a l'arrel de la col·lecció
+        # sempre treballem amb rutes relatives a l'arrel de la col·lecció,
+        # vingui el path com vingui (absolut, relatiu a l'arrel o a la carpeta de treball)
+        fitxer = os.path.normpath(fitxer)
         if os.path.isabs(fitxer):
             return cfg.get_canonical_pathfile(fitxer)
-        return os.path.normpath(fitxer).replace(os.sep, '/')
+        if os.path.exists(os.path.join(cfg.get_root(), fitxer)):
+            return fitxer.replace(os.sep, '/')
+        if os.path.exists(fitxer):
+            return cfg.get_canonical_pathfile(os.path.abspath(fitxer))
+        return fitxer.replace(os.sep, '/')
 
     def generate_uuid(self, file):
         fitxer = self._ruta_relativa(file)
